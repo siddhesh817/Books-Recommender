@@ -1,54 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta charset="UTF-8">
-    <title>Book Recommender System</title>
-    <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-</head>
-<style>
-    .text-white{
-        color:white
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Recommend Books</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
-</style>
-<body style="background-color:black">
 
-    <nav class="navbar" style="background-color:#00a65a">
-        <a class="navbar-brand">My Book recommender</a>
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/recommend">Recommend</a></li>
-            <li><a>Contact</a></li>
-        </ul>
-    </nav>
+    body {
+      background: radial-gradient(circle at top left, #111, #000);
+      color: #f2f2f2;
+      min-height: 100vh;
+    }
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="text-white" style="font-size:50px">Recommend Books</h1>
-                <form action="/recommend_books" method="post">
-                    <input name="user_input" type="text" class="form-control"><br>
-                    <input type="submit" class="btn btn-lg btn-warning">
-                </form>
-            </div>
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
 
-            {% if data %}
-             {% for i in data %}
-                <div class="col-md-3" style="margin-top:50px">
-                    <div class="card">
-                        <div class="card-body">
-                            <img class="card-img-top" src="{{i[2]}}">
-                            <p class="text-white">{{i[0]}}</p>
-                            <h4 class="text-white">{{i[1]}}</h4>
-                        </div>
-                    </div>
-                </div>
-             {% endfor %}
-            {% endif %}
+    .logo {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #fff;
+    }
 
+    ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    ul li a {
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    ul li a:hover {
+      color: #8b5cf6;
+    }
+
+    .content {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 0 1rem;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #8b5cf6;
+      margin-bottom: 2rem;
+    }
+
+    form {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"] {
+      background: rgba(255,255,255,0.05);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 15px;
+      color: #fff;
+      width: 250px;
+      outline: none;
+      transition: background 0.2s ease;
+    }
+
+    input[type="text"]:focus {
+      background: rgba(255,255,255,0.1);
+    }
+
+    button {
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border: none;
+      padding: 12px 20px;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(139,92,246,0.3);
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.8rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .book {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .book:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(139,92,246,0.2);
+    }
+
+    .book img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .book h3 {
+      font-size: 1rem;
+      margin: 10px 0 5px;
+      color: #fff;
+    }
+
+    .book p {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #8b5cf6;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">📚 Book Recommender</div>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/recommend">Recommend</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="content">
+    <h1>Find Your Next Favorite Book</h1>
+    <form action="/recommend_books" method="post">
+      <input type="text" name="user_input" placeholder="Enter a book title..." required>
+      <button type="submit">Recommend</button>
+    </form>
+
+    <div class="results">
+      {% if data %}
+        {% for i in data %}
+        <div class="book">
+          <img src="{{ i[2] }}" alt="Book Cover">
+          <h3>{{ i[0] }}</h3>
+          <p>{{ i[1] }}</p>
         </div>
+        {% endfor %}
+      {% endif %}
     </div>
+  </section>
 
+  <footer>
+    <p>Made with ❤️ by <a href="https://github.com/siddhesh817" target="_blank">Siddhesh Bharapte</a></p>
+  </footer>
 </body>
 </html>
